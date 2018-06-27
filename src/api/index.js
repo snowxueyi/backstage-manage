@@ -68,3 +68,12 @@ export const deleteStation = (param, call) => {
         call({code:-999,msg:'系统异常'})
     });
 }
+//删除组织
+export const deleteOrganization = (param, call) => {
+    http.fetchPost(basePath+'/mng/deleteOrganization.json',param).then(data=>{
+        call(data)
+    }).catch(e=>{
+         alert(JSON.stringify(e))
+        call({code:-999,msg:'系统异常'})
+    });
+}

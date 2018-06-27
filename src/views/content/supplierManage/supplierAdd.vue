@@ -11,7 +11,6 @@
             :data="data5"
             node-key="id"
             default-expand-all
-            :filter-node-method="filterNode"
             :expand-on-click-node="false"
             ref="organization"
             style="flex:1;border:1px solid #eee;margin-right:20px;min-height:500px;">
@@ -19,7 +18,7 @@
                     <span>{{ node.label }}</span>
                     <span style="color:#ccc;!important;">
                         <a
-                            @click="dialogForm1Visible = true"
+                            @click="()=>append(data)"
                             class="el-icon-plus"
                             style="margin-right:10px;">
                         </a>
@@ -27,24 +26,24 @@
                             @click="()=>edit(data)"
                             class="el-icon-edit-outline">
                         </a>
-                        <!-- 新增弹出框-->
-                        <el-dialog title="新建组织" :visible.sync="dialogForm1Visible" center>
-                            <el-form :model="form1">
-                                <el-form-item label="组织名称：" :label-width="formLabelWidth">
-                                    <el-input v-model="form1.name" auto-complete="off"></el-input>
-                                </el-form-item>
-                                <el-form-item label="组织ID：" :label-width="formLabelWidth">
-                                    <el-input v-model="form1.id" auto-complete="off"></el-input>
-                                </el-form-item>
-                            </el-form>
-                            <div slot="footer" class="dialog-footer">
-                                <el-button @click="dialogForm1Visible = false">取 消</el-button>
-                                <el-button type="primary" @click="()=>append(data)">保 存</el-button>
-                            </div>
-                        </el-dialog>
                     </span>
                 </span>
             </el-tree>
+            <!-- 新增弹出框-->
+            <el-dialog title="新建组织" :visible.sync="dialogForm1Visible" center>
+                <el-form :model="form1">
+                    <el-form-item label="组织名称：" :label-width="formLabelWidth">
+                        <el-input v-model="form1.name" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="组织ID：" :label-width="formLabelWidth">
+                        <el-input v-model="form1.id" auto-complete="off" :disabled="true"></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogForm1Visible = false">取 消</el-button>
+                    <el-button type="primary" @click="appendSave">保 存</el-button>
+                </div>
+            </el-dialog>
             <!-- 编辑弹出框-->
             <el-dialog title="编辑组织" :visible.sync="dialogForm2Visible" center>
                 <el-form :model="form1">
@@ -69,6 +68,7 @@
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                     <el-button type="primary" @click="editSave()">保 存</el-button>
+                    <el-button type="primary" @click="deleteOrganization()">删 除</el-button>
                     <el-button @click="dialogForm2Visible = false">取 消</el-button>
                 </div>
             </el-dialog>
@@ -94,7 +94,7 @@
 </template>
 <script>
 let id = 666;
-import { addOrganization,editOrganization,showStation,deleteStation } from "@/api/index";
+import { addOrganization,editOrganization,showStation,deleteStation,deleteOrganization } from "@/api/index";
 export default {
   data() {
     const data = [
@@ -103,19 +103,19 @@ export default {
         label: "快准车服",
         children: [
           {
-            id: 2,
+            id: 100001,
             label: "(100001) 华南区"
           },
           {
-            id: 3,
+            id: 1000002,
             label: "(1000002) 华东大区",
             children: [
               {
-                id: 6,
+                id: 200003,
                 label: "(200003) 江浙区"
               },
               {
-                id: 7,
+                id: 200004,
                 label: "(200004) 闽浙区"
               }
             ]
@@ -144,41 +144,46 @@ export default {
       stationList: [],
       title:'请选择相应组织，对应展示相应服务站',
       stationId:'',
-      editOrganization:{}
+      editOrganization:{},
+      addOrganization:{}
     };
   },
   watch: {
     filterText(val) {
       this.$refs.tree2.filter(val);
+    },
+    editOrganization(val){
+
     }
   },
   methods: {
     append(data) {
-      //   this.dialogForm1Visible = true;
-      const newChild = { id: id++, label: this.form1.name, children: [] };
-      if (!data.children) {
-        return false;
+      this.dialogForm1Visible = true;
+      this.addOrganization=data;
+      this.form1.id=888888;
+    },
+    appendSave(){
+      const newChild = { id: this.form1.id, label: this.form1.name, children: [] };
+      if (!this.addOrganization.children) {
+        this.$set(this.addOrganization, 'children', []);
       }
       //新增组织接口校验
         // addOrganization(this.form1.name, data => {
         //     if (data.code == 100) {
-        //       data.children.push(newChild);
+        //       this.addOrganization.children.push(newChild);
         //       this.dialogForm1Visible=false;
         //     } else {
         //       this.$message.error(data.msg);
         //     }
         //   });
-      data.children.push(newChild);
+      this.addOrganization.children.push(newChild);
       this.dialogForm1Visible = false;
       return false;
-    },
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
     },
     edit(data) {
         this.dialogForm2Visible=true;
         this.editOrganization=data;
+        this.form2.name=data.label;
         console.log(this.editOrganization);
         // data.label=this.form2.name;
     },
@@ -196,6 +201,21 @@ export default {
         //   });
         data.label=this.form2.name;
         this.dialogForm2Visible = false;
+        return false;
+    },
+    deleteOrganization(){
+      var id=this.editOrganization.id;
+      if (this.editOrganization.children) {
+        this.$message('请先删除相应子组织');
+        return false;
+      }
+      // this.data5.some((item,i)=>{
+      //   if(item.id==id){
+      //     this.data5.splice(i,1)
+      //     return true;
+      //   }
+      // })
+
     },
     deleteStation(id) {
       console.log(id);
