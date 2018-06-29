@@ -13,7 +13,7 @@
             default-expand-all
             :expand-on-click-node="false"
             ref="organization"
-            style="flex:1;border:1px solid #eee;margin-right:20px;min-height:500px;">
+            style="flex:1;border:1px solid #eee;margin-right:20px;height:500px;">
                 <span class="custom-tree-node" slot-scope="{ node, data }" @click="()=>showStation(data)">
                     <span>{{ node.label }}</span>
                     <span style="color:#ccc;!important;">
@@ -72,7 +72,7 @@
                     <el-button @click="dialogForm2Visible = false">取 消</el-button>
                 </div>
             </el-dialog>
-            <div class="stationAll" style="flex:1;border:1px solid #eee;min-height:500px;">
+            <div class="stationAll" style="flex:1;border:1px solid #eee;height:200px;">
                 <div class="title custom-tree-node" style="align-items: center;padding-left:5px;">
                     <span>{{title}}</span>
                     <el-button type="text" @click="addStation(stationId)"><i class="el-icon-plus"></i>新增服务站</el-button>
