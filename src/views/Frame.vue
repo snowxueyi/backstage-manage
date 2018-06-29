@@ -1,7 +1,7 @@
 <template>
   <div class="framConstruction">
       <div class="el-header" style="background-color: #4b84ff;width:100%;position:fixed;z-index:667;height:60px;">
-            <div class="logo">快准商城中台</div>
+            <div class="logo">快准运营平台</div>
             <div class="menu" style="position:absolute;left:200px;">
               <el-menu
                 :default-active="activeName"
@@ -12,7 +12,7 @@
                 text-color="#fff"
                 active-text-color="#ffd04b" >
                 <el-menu-item index="1" >商品基础档案</el-menu-item>
-                <el-menu-item index="2" >供货关系管理</el-menu-item>
+                <el-menu-item index="2" >组织管理</el-menu-item>
                 <el-menu-item index="3" >商品营销管理</el-menu-item>
                 <el-menu-item index="4" >权限管理</el-menu-item>
               </el-menu>
@@ -171,12 +171,13 @@ export default {
       ],
       tabIndex: 1,
       productGroup: [
-        { name: "10", title: "供货品新增", position: "2", route: "supplierAdd" },
-        { name: "11", title: "供货品详情", position: "2", route: "supplierDetail" }
+        { name: "10", title: "组织管理", position: "2", route: "supplierAdd" },
+        // { name: "11", title: "供货品详情", position: "2", route: "supplierDetail" },
+        { name: "12", title: "截单规则", position: "2", route: "breakOrder" }
       ],
       powerManage:[
-        {name:'12',title:'账号管理',position:'4',route:'account'},
-        {name:'13',title:'角色管理',position:'4',route:'role'}
+        {name:'13',title:'账号管理',position:'4',route:'account'},
+        {name:'14',title:'角色管理',position:'4',route:'role'}
       ]
     };
   },

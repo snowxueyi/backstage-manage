@@ -23,13 +23,13 @@
                             style="margin-right:10px;">
                         </a>
                         <a
-                            @click="()=>edit(data)"
+                            @click="()=>edit(node,data)"
                             class="el-icon-edit-outline">
                         </a>
                     </span>
                 </span>
             </el-tree>
-            <!-- 新增弹出框-->
+            <!-- 新增组织弹出框-->
             <el-dialog title="新建组织" :visible.sync="dialogForm1Visible" center>
                 <el-form :model="form1">
                     <el-form-item label="组织名称：" :label-width="formLabelWidth">
@@ -44,7 +44,7 @@
                     <el-button type="primary" @click="appendSave">保 存</el-button>
                 </div>
             </el-dialog>
-            <!-- 编辑弹出框-->
+            <!-- 编辑组织弹出框-->
             <el-dialog title="编辑组织" :visible.sync="dialogForm2Visible" center>
                 <el-form :model="form1">
                     <el-form-item label="组织名称：" :label-width="formLabelWidth">
@@ -89,12 +89,41 @@
                     </li> 
                 </ul> 
             </div>
+            <!-- 新增服务站弹出框-->
+            <el-dialog title="选择销售区域" :visible.sync="dialogForm3Visible" center>
+                <el-form :model="form1">
+                    <el-form-item label="销售区域：" :label-width="formLabelWidth">
+                        <el-cascader
+                        :options="options"
+                        v-model="selectData"
+                        change-on-select
+                        @change="selectChange"
+                      ></el-cascader>
+                    </el-form-item>
+                    <el-form-item label="服务站：" :label-width="formLabelWidth">
+                        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+                        <div style="margin: 15px 0;"></div>
+                        <el-checkbox-group v-model="checkedStations" @change="handleCheckedCitiesChange">
+                          <el-checkbox v-for="station in stations" :label="station" :key="station.id" style="display:block;margin:0;">{{station.name}}</el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
         </div>
     </div>
 </template>
 <script>
 let id = 666;
-import { addOrganization,editOrganization,showStation,deleteStation,deleteOrganization } from "@/api/index";
+import {
+  addOrganization,
+  editOrganization,
+  showStation,
+  deleteStation,
+  deleteOrganization,
+  selectAddStation,
+  selectArea
+} from "@/api/index";
+import {getCitys} from "@/store/contain";
 export default {
   data() {
     const data = [
@@ -128,6 +157,7 @@ export default {
       data5: JSON.parse(JSON.stringify(data)),
       dialogForm1Visible: false,
       dialogForm2Visible: false,
+      dialogForm3Visible: false,
       form1: {
         name: "",
         id: ""
@@ -142,139 +172,212 @@ export default {
       },
       formLabelWidth: "120px",
       stationList: [],
-      title:'请选择相应组织，对应展示相应服务站',
-      stationId:'',
-      editOrganization:{},
-      addOrganization:{}
+      title: "请选择相应组织，对应展示相应服务站",
+      stationId: "",
+      editOrganization: { node: {}, data: {} },
+      addOrganization: {},
+      options:getCitys(),
+      checkAll: false,
+      checkedStations: [],
+      stations: [{name:'武汉服务站',id:999},{name:'上海服务站',id:666}],
+      isIndeterminate: true,
+      selectData:[]
     };
   },
   watch: {
     filterText(val) {
       this.$refs.tree2.filter(val);
     },
-    editOrganization(val){
-
-    }
+    editOrganization(val) {}
   },
   methods: {
     append(data) {
       this.dialogForm1Visible = true;
-      this.addOrganization=data;
-      this.form1.id=888888;
+      this.addOrganization = data;
+      this.form1.id = 888888;
     },
-    appendSave(){
-      const newChild = { id: this.form1.id, label: this.form1.name, children: [] };
+    appendSave() {
+      const newChild = {
+        id: this.form1.id,
+        label: this.form1.name,
+        children: []
+      };
       if (!this.addOrganization.children) {
-        this.$set(this.addOrganization, 'children', []);
+        this.$set(this.addOrganization, "children", []);
       }
       //新增组织接口校验
-        // addOrganization(this.form1.name, data => {
-        //     if (data.code == 100) {
-        //       this.addOrganization.children.push(newChild);
-        //       this.dialogForm1Visible=false;
-        //     } else {
-        //       this.$message.error(data.msg);
-        //     }
-        //   });
+      // addOrganization(this.form1.name, data => {
+      //     if (data.code == 100) {
+      //       this.addOrganization.children.push(newChild);
+      //       this.dialogForm1Visible=false;
+      //     } else {
+      //       this.$message.error(data.msg);
+      //     }
+      //   });
       this.addOrganization.children.push(newChild);
       this.dialogForm1Visible = false;
       return false;
     },
-    edit(data) {
-        this.dialogForm2Visible=true;
-        this.editOrganization=data;
-        this.form2.name=data.label;
-        console.log(this.editOrganization);
-        // data.label=this.form2.name;
+    edit(node, data) {
+      this.dialogForm2Visible = true;
+      this.editOrganization.data = data;
+      this.editOrganization.node = node;
+      this.form2.name = data.label;
+      console.log(this.editOrganization.data);
+      // data.label=this.form2.name;
     },
-    editSave(){
-       var data=this.editOrganization;
-        console.log(data);
-        //编辑组织并保存接口请求
-        // editOrganization(this.form2.name, data => {
-        //     if (data.code == 100) {
-        //       data.label=this.form2.name;
-        //       this.dialogForm2Visible=false;
-        //     } else {
-        //       this.$message.error(data.msg);
-        //     }
-        //   });
-        data.label=this.form2.name;
-        this.dialogForm2Visible = false;
-        return false;
+    editSave() {
+      var data = this.editOrganization.data;
+      var node = this.editOrganization.node;
+      console.log(data.$treeNodeId);
+      //编辑组织并保存接口请求
+      // editOrganization(this.form2.name, data => {
+      //     if (data.code == 100) {
+      //       data.label=this.form2.name;
+      //       this.dialogForm2Visible=false;
+      //     } else {
+      //       this.$message.error(data.msg);
+      //     }
+      //   });
+      data.label = this.form2.name;
+      this.dialogForm2Visible = false;
+      return false;
     },
-    deleteOrganization(){
-      var id=this.editOrganization.id;
+    deleteOrganization() {
+      var id = this.editOrganization.data.id;
+      var node = this.editOrganization.node;
+      //删除父组织
       if (this.editOrganization.children) {
-        this.$message('请先删除相应子组织');
+        this.$message("请先删除相应子组织");
         return false;
       }
-      // this.data5.some((item,i)=>{
-      //   if(item.id==id){
-      //     this.data5.splice(i,1)
-      //     return true;
-      //   }
-      // })
-
+      // ajax请求删除对应组织信息
+      //   deleteOrganization(id, data => {
+      //         if (data.code == 100) {
+      //           // 根据Id，从组织中删除对应组织数据
+      //             const parent = node.parent;
+      //             const children = parent.data.children || parent.data;
+      //             const index = children.findIndex(d => d.id === id);
+      //             children.splice(index, 1);
+      //             this.dialogForm2Visible = false;
+      //         } else {
+      //           this.$message.error(data.msg);
+      //         }
+      //     });
+      const parent = node.parent;
+      const children = parent.data.children || parent.data;
+      const index = children.findIndex(d => d.id === id);
+      children.splice(index, 1);
+      this.dialogForm2Visible = false;
     },
     deleteStation(id) {
       console.log(id);
       //ajax请求删除对应服务站信息
-    //   deleteStation(id, data => {
-    //         if (data.code == 100) {
-    //           // 根据Id，从stationList 中删除对应服务站数据
-    //             this.stationList.forEach(item => {
-    //                 item.station.some((item1,i)=>{
-    //                     if (item1.id == id) {
-    //                         item.station.splice(i, 1)
-    //                         return true;
-    //                     }
-    //                 })
-    //             })
-    //         } else {
-    //           this.$message.error(data.msg);
-    //         }
-    //     });
+      //   deleteStation(id, data => {
+      //         if (data.code == 100) {
+      //           // 根据Id，从stationList 中删除对应服务站数据
+      //             this.stationList.forEach(item => {
+      //                 item.station.some((item1,i)=>{
+      //                     if (item1.id == id) {
+      //                         item.station.splice(i, 1)
+      //                         return true;
+      //                     }
+      //                 })
+      //             })
+      //         } else {
+      //           this.$message.error(data.msg);
+      //         }
+      //     });
 
-    //前端数据模拟
-        this.stationList.forEach(item => {
-            item.station.forEach((item1,i)=>{
-                if (item1.id == id) {
-                    console.log(item1);
-                    item.station.splice(i, 1)
-                    return true;
-                }
-            })
-        })
+      //前端数据模拟
+      this.stationList.forEach(item => {
+        item.station.forEach((item1, i) => {
+          if (item1.id == id) {
+            console.log(item1);
+            item.station.splice(i, 1);
+            return true;
+          }
+        });
+      });
     },
-    addStation(id){
-        console.log(id);
-        //组织为空判断
-        if(id==null||id==undefined||id==''){
-            this.$message.error('请先选择组织，才能新增服务站');
-            return false;
-        }
-    },
-    showStation(data) {
-      if(data.id==1){
-          return false;//一级组织不展示对应服务站
+    addStation(id) {
+      console.log(id);
+      //组织为空判断
+      if (id == null || id == undefined || id == "") {
+        this.$message.error("请先选择组织，才能新增服务站");
+        return false;
       }
-      this.title=data.label+'对应服务站';
-      this.stationId=data.id;
-    //ajax请求获取对应服务站
-    //   showStation(data.id, data => {
-    //         if (data.code == 100) {
-    //           this.stationList=data.stationList;
-    //           this.dialogForm1Visible=false;
-    //         } else {
-    //           this.$message.error(data.msg);
-    //         }
-    //       });
+      this.dialogForm3Visible = true;
+    },
+    //新增服务站全选逻辑
+    handleCheckAllChange(val) {
+        this.checkedStations = val ? this.stations : [];
+        this.isIndeterminate = false;
+        console.log(val);
+      },
+    //新增服务站选中逻辑
+      handleCheckedCitiesChange(value) {
+        let checkedCount = value.length;
+        this.checkAll = checkedCount === this.stations.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.stations.length;
+        console.log(value);
+        var province=this.selectData[0];
+        //ajax请求新增服务站
+        // selectAddStation(value, data => {
+        //       if (data.code == 100) {
+        //         this.stationList.forech(item=>{
+        //           if(item.province==province){
+        //             item.station.push(value);
+        //           }
+        //         })
+        //       } else {
+        //         this.$message.error(data.msg);
+        //       }
+        //     });
+        this.stationList.forEach(item=>{
+                  if(item.province==province){
+                    for(var i in value){
+                      if(checkedCount!==0){
+                        const station=item.station;
+                        console.log(station);
+                        item.station.push(value[i]);
+                        var index=item.station.indexOf(value);
+                      }
+                    }
+                  }
+                })
+      },
+      selectChange(){
+        // console.log(this.selectData)
+        //ajax请求选择省市区展示对应服务站selectArea
+          // selectArea(this.selectData, data => {
+          //     if (data.code == 100) {
+          //       this.stations=data.stations;
+          //     } else {
+          //       this.$message.error(data.msg);
+          //     }
+          //   });
+      },
+    showStation(data) {
+      if (data.id == 1) {
+        return false; //一级组织不展示对应服务站
+      }
+      this.title = data.label + "对应服务站";
+      this.stationId = data.id;
+      //ajax请求获取对应服务站
+      //   showStation(data.id, data => {
+      //         if (data.code == 100) {
+      //           this.stationList=data.stationList;
+      //           this.dialogForm1Visible=false;
+      //         } else {
+      //           this.$message.error(data.msg);
+      //         }
+      //       });
 
-    //前端数据模拟
-      this.stationList=[
+      //前端数据模拟
+      this.stationList = [
         {
-          province: "浙江省",
+          province: "浙江",
           station: [
             { name: "金华服务站", id: 101 },
             { name: "嘉兴服务站", id: 102 },
@@ -283,7 +386,7 @@ export default {
           ]
         },
         {
-          province: "江苏省",
+          province: "江苏",
           station: [
             { name: "徐州服务站", id: 105 },
             { name: "南京服务站", id: 106 },
@@ -292,7 +395,7 @@ export default {
           ]
         },
         {
-          province: "安徽省",
+          province: "安徽",
           station: [
             { name: "合肥服务站", id: 109 },
             { name: "黄山服务站", id: 110 },
@@ -300,7 +403,7 @@ export default {
             { name: "安庆服务站", id: 112 }
           ]
         }
-      ]
+      ];
     }
   }
 };

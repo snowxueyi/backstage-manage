@@ -77,3 +77,21 @@ export const deleteOrganization = (param, call) => {
         call({code:-999,msg:'系统异常'})
     });
 }
+//选择省市展示对应服务站
+export const selectArea = (param, call) => {
+    http.fetchPost(basePath+'/mng/selectArea.json',param).then(data=>{
+        call(data)
+    }).catch(e=>{
+         alert(JSON.stringify(e))
+        call({code:-999,msg:'系统异常'})
+    });
+}
+//选择省市添加服务站
+export const selectAddStation = (param, call) => {
+    http.fetchPost(basePath+'/mng/selectAddStation.json',param).then(data=>{
+        call(data)
+    }).catch(e=>{
+         alert(JSON.stringify(e))
+        call({code:-999,msg:'系统异常'})
+    });
+}
