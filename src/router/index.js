@@ -7,6 +7,7 @@ import goodsList from '@/views/content/goodsBasicInfo/goodsList'
 import measureConfig from '@/views/content/goodsBasicInfo/measureConfig'
 import supplierDetail from '@/views/content/supplierManage/supplierDetail'
 import supplierAdd from '@/views/content/supplierManage/supplierAdd'
+import breakOrder from '@/views/content/supplierManage/breakOrder'
 import brandConfig from '@/views/content/goodsBasicInfo/brandConfig'
 import account from '@/views/content/authorityManage/account'
 import role from '@/views/content/authorityManage/role'
@@ -40,6 +41,10 @@ export default new Router({
         {
           path: '/supplierAdd',
           name: 'supplierAdd', component: supplierAdd
+        },
+        {
+          path: '/breakOrder',
+          name: 'breakOrder', component: breakOrder
         },
         {
           path:'/addGoods',
