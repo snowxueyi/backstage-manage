@@ -1,4 +1,5 @@
 import citys from "./citys";
+import area from "./area";
 
 //系统基础url位置
 export const base = ""
@@ -45,3 +46,31 @@ export const State = [
     { value: 7, label: "售罄" },
     //{ value: 5, label: "已删除" },
 ]
+//带地址编码城市地址
+export const getArea = () => {
+    let temp1 = [];
+    for (let k in area) {
+        let provice = {
+            value: k,
+            label: area[k].name,
+            children: []
+        }
+        for (let h in area[k].child) {
+            let city = {
+                value: h,
+                label: (area[k].child)[h].name,
+                children: []
+            }
+            for (let i = 0; i < Object.keys((area[k].child)[h].child).length; i++) {
+                let rea = {
+                    value: Object.keys((area[k].child)[h].child)[i],
+                    label: Object.values((area[k].child)[h].child)[i],
+                }
+                city.children.push(rea);
+            }
+            provice.children.push(city);
+        }
+        temp1.push(provice);
+    }
+    return temp1;
+};

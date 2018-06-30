@@ -72,7 +72,7 @@
                     <el-button @click="dialogForm2Visible = false">取 消</el-button>
                 </div>
             </el-dialog>
-            <div class="stationAll" style="flex:1;border:1px solid #eee;height:200px;">
+            <div class="stationAll" style="flex:1;border:1px solid #eee;height:500px;overflow-y:scroll;">
                 <div class="title custom-tree-node" style="align-items: center;padding-left:5px;">
                     <span>{{title}}</span>
                     <el-button type="text" @click="addStation(stationId)"><i class="el-icon-plus"></i>新增服务站</el-button>
@@ -123,7 +123,7 @@ import {
   selectAddStation,
   selectArea
 } from "@/api/index";
-import {getCitys} from "@/store/contain";
+import {getArea} from "@/store/contain";
 export default {
   data() {
     const data = [
@@ -176,7 +176,7 @@ export default {
       stationId: "",
       editOrganization: { node: {}, data: {} },
       addOrganization: {},
-      options:getCitys(),
+      options:getArea(),
       checkAll: false,
       checkedStations: [],
       stations: [{name:'武汉服务站',id:999},{name:'上海服务站',id:666}],
@@ -314,13 +314,40 @@ export default {
         this.checkedStations = val ? this.stations : [];
         this.isIndeterminate = false;
         console.log(val);
+        var province=this.selectData[0];
+          this.stationList.forEach(item=>{
+            if(item.code==province){
+              if(val){
+                  for(var i in this.stations){
+                    item.station.filter(item2=>{
+                      if(item2.id==this.stations[i].id){
+                        item.station.splice(item.station.indexOf(this.stations[i]),1);//已在列表中服务站防止重复添加
+                        return false;
+                      }
+                    })
+                    item.station.push(this.stations[i])
+                  }
+              }else{
+                item.station.forEach((item1,k)=>{
+                  for(var h in this.stations){
+                    item.station.filter(item2=>{
+                      if(item2.id==this.stations[h].id){
+                        item.station.splice(item.station.indexOf(this.stations[h]),1);//已在列表中服务站防止重复添加
+                        return false;
+                      }
+                    })
+                  }
+                }) 
+              }
+            }
+          })
       },
     //新增服务站选中逻辑
       handleCheckedCitiesChange(value) {
+        console.log(value);
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.stations.length;
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.stations.length;
-        console.log(value);
         var province=this.selectData[0];
         //ajax请求新增服务站
         // selectAddStation(value, data => {
@@ -334,21 +361,40 @@ export default {
         //         this.$message.error(data.msg);
         //       }
         //     });
+        var arr=this.stations.slice(0);
+        if(checkedCount!==0){
+          for(var k in value){
+            var index=arr.indexOf(value[k]);
+              arr.splice(index,1);
+          }
+        }
         this.stationList.forEach(item=>{
-                  if(item.province==province){
-                    for(var i in value){
-                      if(checkedCount!==0){
-                        const station=item.station;
-                        console.log(station);
-                        item.station.push(value[i]);
-                        var index=item.station.indexOf(value);
+                  if(item.code==province){
+                    if(checkedCount!==0){
+                          for(var i in value){
+                            item.station.filter(item2=>{
+                              if(item2.id==value[i].id){
+                                item.station.splice(item.station.indexOf(value[i]),1);//已在列表中服务站防止重复添加
+                                return false;
+                              }
+                            })
+                            item.station.push(value[i]);
+                          }
                       }
-                    }
+                    if(arr.length!==0){
+                        item.station.forEach((item1,k)=>{
+                          for(var h in arr){
+                            if(item1.id==arr[h].id){
+                              item.station.splice(k,1);
+                            }
+                          }
+                        })                      
+                      }
                   }
                 })
       },
       selectChange(){
-        // console.log(this.selectData)
+        console.log(this.selectData);
         //ajax请求选择省市区展示对应服务站selectArea
           // selectArea(this.selectData, data => {
           //     if (data.code == 100) {
@@ -378,6 +424,7 @@ export default {
       this.stationList = [
         {
           province: "浙江",
+          code:'330000',
           station: [
             { name: "金华服务站", id: 101 },
             { name: "嘉兴服务站", id: 102 },
@@ -387,6 +434,7 @@ export default {
         },
         {
           province: "江苏",
+          code:'320000',
           station: [
             { name: "徐州服务站", id: 105 },
             { name: "南京服务站", id: 106 },
@@ -396,6 +444,7 @@ export default {
         },
         {
           province: "安徽",
+          code:'340000',
           station: [
             { name: "合肥服务站", id: 109 },
             { name: "黄山服务站", id: 110 },

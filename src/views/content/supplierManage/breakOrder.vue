@@ -117,24 +117,24 @@
           <el-switch v-model="configRule" active-text="按周配置" inactive-text="按时间间隔配置"> </el-switch>
             <el-form :model="form1" size="mini" v-if="configRule">
                 <el-form-item label="规则命名：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form1.breakName" size="mini" style="width:300px;"></el-input>
+                    <el-input v-model="form1.breakName" size="mini" style="width:200px;"></el-input>
                   </el-form-item>
                   <el-form-item label="时间：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form1.time" size="mini" style="width:300px;"></el-input>
+                    <el-input v-model="form1.time" size="mini" style="width:200px;"></el-input>
                   </el-form-item>
                   <el-form-item label="间隔周期：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form1.cycle" size="mini" style="width:300px;"></el-input>
+                    <el-input v-model="form1.cycle" size="mini" style="width:200px;"></el-input>
                   </el-form-item>
             </el-form>
             <el-form :model="form2" size="mini" v-else>
                 <el-form-item label="规则命名：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form2.breakName" size="mini" style="width:300px;"></el-input>
+                    <el-input v-model="form2.breakName" size="mini" style="width:200px;"></el-input>
                   </el-form-item>
                   <el-form-item label="开始时间：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form2.breakData.data.begainTime" size="mini" style="width:300px;"></el-input>
+                    <el-input v-model="form2.breakData.data.begainTime" size="mini" style="width:200px;"></el-input>
                   </el-form-item>
                   <el-form-item label="间隔周期：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form2.breakData.data.cycle" size="mini" style="width:300px;"></el-input>
+                    <el-input v-model="form2.breakData.data.cycle" size="mini" style="width:200px;"></el-input>
                   </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
