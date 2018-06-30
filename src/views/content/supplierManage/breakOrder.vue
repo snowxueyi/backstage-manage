@@ -105,7 +105,26 @@
                     <el-option label="区域二" value="beijing"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="计量单位名称：" :label-width="formLabelWidth" required>
+            <el-form-item label="周一：" :label-width="formLabelWidth" required>
+                <el-input v-for="item in form.monday" :key="item" :value="item" size="mini" style="width:90px;margin-right:5px;"><el-button slot="append" icon="el-icon-delete" @click="deleteTime(item)"></el-button></el-input>
+                <el-time-picker v-model="newAddTime" placeholder="添加时间" :picker-options="{selectableRange: '00:00:00 - 23:59:59'}" @blur="addTime"></el-time-picker>
+            </el-form-item>
+            <el-form-item label="周二：" :label-width="formLabelWidth" required>
+                <el-input v-model="form.measureName" size="mini" style="width:200px;"></el-input>
+            </el-form-item>
+            <el-form-item label="周三：" :label-width="formLabelWidth" required>
+                <el-input v-model="form.measureName" size="mini" style="width:200px;"></el-input>
+            </el-form-item>
+            <el-form-item label="周四：" :label-width="formLabelWidth" required>
+                <el-input v-model="form.measureName" size="mini" style="width:200px;"></el-input>
+            </el-form-item>
+            <el-form-item label="周五：" :label-width="formLabelWidth" required>
+                <el-input v-model="form.measureName" size="mini" style="width:200px;"></el-input>
+            </el-form-item>
+            <el-form-item label="周六：" :label-width="formLabelWidth" required>
+                <el-input v-model="form.measureName" size="mini" style="width:200px;"></el-input>
+            </el-form-item>
+            <el-form-item label="周日：" :label-width="formLabelWidth" required>
                 <el-input v-model="form.measureName" size="mini" style="width:200px;"></el-input>
             </el-form-item>
         </el-form>
@@ -208,11 +227,11 @@ export default {
         dialogForm1Visible:false,
         dialogForm2Visible:false,
         formLabelWidth:'122px',
-        form:{belongSort:'',measureName:''},
-        form1:{},
+        form:{belongSort:'',measureName:'',monday:['10:00','11:00','12:00']},
         form1:{breakName:'',breakData:{time:'',cycle:''}},
         form2:{breakName:'',breakData:{mark:'',data:{begainTime:'',cycle:''}}},
-        configRule:true
+        configRule:true,
+        newAddTime:new Date()
     };
   },
   methods:{
@@ -230,6 +249,14 @@ export default {
       },
       save(){
 
+      },
+      deleteTime(time){
+        var index=this.form.monday.indexOf(time);
+        this.form.monday.splice(index,1);
+      },
+      addTime(){
+        this.form.monday.push(new Date(this.newAddTime));
+        this.newAddTime='';
       }
   }
 };
@@ -246,6 +273,9 @@ export default {
   .el-switch {
     margin-left: 20%;
     margin-bottom: 15px;
+  }
+  .el-input-group__append{
+    padding:0 10px;
   }
 }
 </style>
