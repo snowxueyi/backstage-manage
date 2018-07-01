@@ -19,6 +19,8 @@ const whiteList = [] // 不需要登陆的页面
 router.beforeEach(function (to, from, next) {
   store.commit("GETRECORD_PHONE");
   store.commit("GET_USERINFO");
+  store.commit("SET_HEADNAV",to.head);
+  store.commit("SET_SIDENAV",to.side)
   //store.commit("SET_LOADING",true);
   if(to.path=="/login"){
     store.commit("SET_PATH","login");

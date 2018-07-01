@@ -9,7 +9,9 @@ const state = {
   title:"首页",
   loading:true,
   recodePhone:'',
-  path:"home"
+  path:"home",
+  activeName:'1',
+  asideActive:'1'
 }
 
 export default new Vuex.Store({

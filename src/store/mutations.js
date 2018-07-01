@@ -5,6 +5,8 @@ const RECORD_PHONE = 'RECORD_PHONE'
 const GETRECORD_PHONE = 'GETRECORD_PHONE'
 const SET_LOADING = 'SET_LOADING'
 const SET_PATH = 'SET_PATH'
+const SET_HEADNAV='SET_HEADNAV'
+const SET_SIDENAV='SET_SIDENAV'
 
 import { setStore, getStore } from '../utils/storage'
 export default {
@@ -33,6 +35,14 @@ export default {
   // 设置页面路径标题
   [SET_TITLE] (state,title){
     state.title=title
+  },
+  //设置页面顶部tab位置 
+  [SET_HEADNAV] (state,activeName){
+    state.activeName=activeName
+  },
+  //设置页面侧边栏tab位置
+  [SET_SIDENAV] (state,asideActive){
+    state.asideActive=asideActive
   },
   // 记录用户信息
   [RECORD_USERINFO] (state, info) {

@@ -32,19 +32,19 @@ export default new Router({
       children: [
         {
           path: '/goodsSort',
-          name: 'goodsSort', component: goodsSort
+          name: 'goodsSort', component: goodsSort,head:'1',side:'3'
         },
         {
           path: '/supplierDetail/:id',
-          name: 'supplierDetail', component: supplierDetail
+          name: 'supplierDetail', component: supplierDetail,head:'1',side:'9'
         },
         {
           path: '/supplierAdd',
-          name: 'supplierAdd', component: supplierAdd
+          name: 'supplierAdd', component: supplierAdd,head:'2',side:'1'
         },
         {
           path: '/breakOrder',
-          name: 'breakOrder', component: breakOrder
+          name: 'breakOrder', component: breakOrder,head:'2',side:'2'
         },
         {
           path:'/addGoods',

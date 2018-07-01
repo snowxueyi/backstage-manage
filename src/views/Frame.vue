@@ -340,7 +340,7 @@ body {
         // top: 61px;
         // margin-top: 15px;
         padding: 20px;
-        width: 100%;
+        width: 99%;
         padding-top:70px;
       }
     } 
