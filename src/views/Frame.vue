@@ -11,10 +11,7 @@
                 background-color="#4b84ff"
                 text-color="#fff"
                 active-text-color="#ffd04b" >
-                <el-menu-item index="1" >商品基础档案</el-menu-item>
-                <el-menu-item index="2" >组织管理</el-menu-item>
-                <el-menu-item index="3" >商品营销管理</el-menu-item>
-                <el-menu-item index="4" >权限管理</el-menu-item>
+                <el-menu-item :index="item.id" :key="item.id" v-for="item in menuList" >{{item.label}}</el-menu-item>
               </el-menu>
             </div>
             <div class="loginout" style="height:60px;line-height:60px;color:#fff;width:150px;position:absolute;right:10px;">
@@ -35,100 +32,20 @@
           <el-aside class="menu-warp" width="200px" style="height:100%">
             <div  style="height:100%">
               <el-menu
+                :key="item.id" 
+                v-for="item in menuList"
                 style="height:100%"
                 :default-active="asideActive"
                 class="el-menu-vertical-demo"
                 background-color="#fff"
                 text-color="#333"
-                v-if="index=='1'"
+                v-if="index==item.id"
                 active-text-color="#ffd04b">
-                <el-menu-item index="1" @click="addtab({name:'1',title:'新增商品',route:'/addGoods',position:'1'})">
-                  <router-link to="/addGoods" tag="div">
+                <el-menu-item :index="item1.name" :key="item1.title" v-for="item1 in item.children" @click="addtab(item1)">
+                  <router-link :to="`${item1.route}`" tag="div">
                     <div>
                       <i class="el-icon-menu"></i>
-                      <span slot="title">新增商品</span>
-                    </div>
-                  </router-link>
-                </el-menu-item>
-                <el-menu-item index="2"  @click="addtab({name:'2',title:'商品列表',route:'/goodsList',position:'1'})">
-                  <router-link to="/goodsList" tag="div">
-                    <div>
-                      <i class="el-icon-menu"></i>
-                      <span slot="title">商品列表</span>
-                    </div>
-                  </router-link>
-                </el-menu-item>
-                <el-menu-item index="3"  @click="addtab({name:'3',title:'商品分类配置',route:'/goodsSort',position:'1'})">
-                  <router-link to="/goodsSort" tag="div">
-                    <div>
-                      <i class="el-icon-menu"></i>
-                      <span slot="title">商品分类配置</span>
-                    </div>
-                  </router-link>
-                </el-menu-item>
-                <el-menu-item index="4"  @click="addtab({name:'4',title:'计量单位配置',route:'/measureConfig',position:'1'})">
-                <router-link to="/measureConfig" tag="div">
-                    <div>
-                      <i class="el-icon-menu"></i>
-                      <span slot="title">计量单位配置</span>
-                    </div>
-                  </router-link>
-                </el-menu-item>
-                <el-menu-item index="5"  @click="addtab({name:'5',title:'商品品牌配置',route:'/brandConfig',position:'1'})">
-                  <router-link to="/brandConfig" tag="div">
-                    <div>
-                      <i class="el-icon-menu"></i>
-                      <span slot="title">商品品牌配置</span>
-                    </div>
-                  </router-link>
-                </el-menu-item>
-                <el-menu-item index="6"  @click="addtab('6')">
-                  <i class="el-icon-menu"></i>
-                  <span slot="title">商品品牌类型配置</span>
-                </el-menu-item>
-                <el-menu-item index="7"  @click="addtab('7')">
-                  <i class="el-icon-document"></i>
-                  <span slot="title">销售状态配置</span>
-                </el-menu-item>
-                <el-menu-item index="8"  @click="addtab('8')">
-                  <i class="el-icon-setting"></i>
-                  <span slot="title">计划组配置</span>
-                </el-menu-item>
-                <el-menu-item index="9"  @click="addtab('9')">
-                  <i class="el-icon-menu"></i>
-                  <span slot="title">产品组配置</span>
-                </el-menu-item>
-              </el-menu>
-              <el-menu
-                style="height:100%"
-                :default-active="asideActive"
-                class="el-menu-vertical-demo"
-                background-color="#fff"
-                text-color="#333"
-                v-if="index=='2'"
-                active-text-color="#ffd04b">
-                <el-menu-item :index="item.name" :key="item.title" v-for="item in productGroup" @click="addtab(item)">
-                  <router-link :to="`${item.route}`" tag="div">
-                    <div>
-                      <i class="el-icon-menu"></i>
-                      <span slot="title">{{item.title}}</span>
-                    </div>
-                  </router-link>
-                </el-menu-item>
-              </el-menu>
-              <el-menu
-                style="height:100%"
-                :default-active="asideActive"
-                class="el-menu-vertical-demo"
-                background-color="#fff"
-                text-color="#333"
-                v-if="index=='4'"
-                active-text-color="#ffd04b">
-                <el-menu-item :index="item.name" :key="item.title" v-for="item in powerManage" @click="addtab(item)">
-                  <router-link :to="`${item.route}`" tag="div">
-                    <div>
-                      <i class="el-icon-menu"></i>
-                      <span slot="title">{{item.title}}</span>
+                      <span slot="title">{{item1.title}}</span>
                     </div>
                   </router-link>
                 </el-menu-item>
@@ -170,14 +87,41 @@ export default {
         }
       ],
       tabIndex: 1,
-      productGroup: [
-        { name: "10", title: "组织管理", position: "2", route: "supplierAdd" },
-        // { name: "11", title: "供货品详情", position: "2", route: "supplierDetail" },
-        { name: "12", title: "截单规则", position: "2", route: "breakOrder" }
-      ],
-      powerManage:[
-        {name:'13',title:'账号管理',position:'4',route:'account'},
-        {name:'14',title:'角色管理',position:'4',route:'role'}
+      menuList: [
+        {
+          id: '1',
+          label: '商品基础档案',
+          children: [
+            {name:'1',title:'新增商品',route:'/addGoods',position:'1'},
+            {name:'2',title:'商品列表',route:'/goodsList',position:'1'},
+            {name:'3',title:'商品分类配置',route:'/goodsSort',position:'1'},
+            {name:'4',title:'计量单位配置',route:'/measureConfig',position:'1'},
+            {name:'5',title:'商品品牌配置',route:'/brandConfig',position:'1'}
+            ]
+        }, 
+        {
+          id: '2',
+          label: '组织管理',
+          children: [
+            { name: "6", title: "组织管理", position: "2", route: "supplierAdd" },
+            { name: "7", title: "截单规则", position: "2", route: "breakOrder" }
+            ]
+        },
+        {
+          id: '3',
+          label: '菜单管理',
+          children: [
+            { name: "8", title: "菜单管理", position: "3", route: "menuManage" },
+            ]
+        }, 
+        {
+          id: '4',
+          label: '权限管理',
+          children: [
+            {name:'10',title:'账号管理',position:'4',route:'account'},
+            {name:'11',title:'角色管理',position:'4',route:'role'}
+            ]
+        }
       ]
     };
   },

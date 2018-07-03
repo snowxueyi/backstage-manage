@@ -70,7 +70,7 @@
                     ref="tree2">
                     <span class="custom-tree-node" slot-scope="{ node, data }" >
                         <span>{{ node.label }}</span>
-                        <span v-if="node.children.length>0">
+                        <span>
                         <el-button
                             type="text"
                             size="mini"

@@ -39,68 +39,54 @@
           width="500"
           height="500"
           trigger="click">
-            <el-table :data="scope.row.breakData.data" border size="mini" v-if="scope.row.breakData.mark==1">
-              <el-table-column  property="name" ></el-table-column>
-              <el-table-column  property="time" label="截单时间"></el-table-column>
-            </el-table>
-            <el-form :model="scope.row.breakData.data" v-if="scope.row.breakData.mark==2">
-              <el-form-item label="规则开始时间：" :label-width="formLabelWidth">
-                <el-input v-model="scope.row.breakData.data.begainTime" auto-complete="off" :disabled="true"></el-input>
-              </el-form-item>
-              <el-form-item label="间隔周期：" :label-width="formLabelWidth">
-                <el-input v-model="scope.row.breakData.data.cycle" auto-complete="off" :disabled="true"></el-input>
-              </el-form-item>
-              <el-form-item label="下次执行时间：" :label-width="formLabelWidth">
-                <el-input v-model="scope.row.breakData.data.nextTime" auto-complete="off" :disabled="true"></el-input>
-              </el-form-item>
+            <el-form :model="scope.row.breakData" size="mini" :rules="rules" ref="ruleForm">
+                <el-form-item label="开始日期：" :label-width="formLabelWidth"  >
+                  <el-date-picker v-model="scope.row.breakData.begainDate" type="date" disabled placeholder="请选择开始日期"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="截止日期：" :label-width="formLabelWidth"  >
+                    <el-date-picker v-model="scope.row.breakData.endDate" type="date" disabled placeholder="请选择截止日期"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="日期类型：" :label-width="formLabelWidth"  >
+                    <el-radio v-model="scope.row.breakData.dateType" label="1" disabled>当日</el-radio>
+                    <el-radio v-model="scope.row.breakData.dateType" label="2" disabled>昨日</el-radio>
+                </el-form-item>
+                <el-form-item label="开始时间：" :label-width="formLabelWidth" >  
+                    <el-time-picker v-model="scope.row.breakData.begainTime" :picker-options="{selectableRange: '00:00:00 - 23:59:59'}" disabled placeholder="开始时间"></el-time-picker>
+                </el-form-item>
+                <el-form-item label="截止时间：" :label-width="formLabelWidth"  >
+                    <el-time-picker v-model="scope.row.breakData.endTime" :picker-options="{selectableRange: '00:00:00 - 23:59:59'}" disabled placeholder="截止时间"></el-time-picker>
+                </el-form-item>
             </el-form>
             <el-button slot="reference"  size="small" type="text">{{scope.row.breakName}}</el-button>
           </el-popover>
       </template>
     </el-table-column>
-    <el-table-column
-      prop="station"
-      label="关联的服务站"
-      align="center"
-      width="120">
-    </el-table-column>
-    <el-table-column
-      prop="createTime"
-      label="创建时间"
-      align="center"
-      >
-    </el-table-column>
-    <el-table-column
-      prop="createPerson"
-      label="创建人"
-      align="center"
-      width="120">
-    </el-table-column>
-    <el-table-column
-      prop="updateTime"
-      label="更新时间"
-      align="center"
-      >
-    </el-table-column>
-    <el-table-column
-      prop="updatePerson"
-      label="更新人"
-      align="center"
-      width="120">
-    </el-table-column>
-    <el-table-column
-      label="操作"
-      align="center"
-      width="100">
+    <el-table-column prop="station" label="关联的服务站" align="center" width="120"></el-table-column>
+    <el-table-column prop="createTime" label="创建时间" align="center"></el-table-column>
+    <el-table-column prop="createPerson" label="创建人" align="center" width="120"></el-table-column>
+    <el-table-column prop="updateTime" label="更新时间" align="center"></el-table-column>
+    <el-table-column prop="updatePerson" label="更新人" align="center" width="120"></el-table-column>
+    <el-table-column label="操作" align="center" width="100">
       <template slot-scope="scope">
         <el-button @click="handleClick(scope.row)" type="text" size="small">编辑规则</el-button>
       </template>
     </el-table-column>
   </el-table>
+  <el-row style="padding:15px;text-align:right">
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="params.currentPage"
+          :page-sizes="pageSizes"
+          :page-size="params.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
+      </el-pagination>
+  </el-row>
   <el-dialog title="新增规则" :visible.sync="dialogForm1Visible" center >
         <div class="content">
           <el-form :model="form" size="mini" :rules="rules" ref="ruleForm" style="flex:1;margin-right:15px;border:1px solid #eee;height:240px;padding-top:5px;">
-            <el-form-item label=" 开始日期：" :label-width="formLabelWidth"  prop="begainDate">
+            <el-form-item label="开始日期：" :label-width="formLabelWidth"  prop="begainDate">
               <el-date-picker v-model="form.begainDate" type="date" placeholder="请选择开始日期"></el-date-picker>
             </el-form-item>
             <el-form-item label="截止日期：" :label-width="formLabelWidth"  prop="endDate">
@@ -123,48 +109,59 @@
         </div>
         </div>
         <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="getCheckedNodes">保存</el-button>
+            <el-button type="primary" @click="getCheckedNodes('organization')">保存</el-button>
         </div>
     </el-dialog>
-    <el-dialog title="编辑规则" :visible.sync="dialogForm2Visible" width="30%" center>
-          <el-switch v-model="configRule" active-text="按周配置" inactive-text="按时间间隔配置"> </el-switch>
-            <el-form :model="form1" size="mini" v-if="configRule">
-                <el-form-item label="规则命名：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form1.breakName" size="mini" style="width:200px;"></el-input>
-                  </el-form-item>
-                  <el-form-item label="时间：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form1.time" size="mini" style="width:200px;"></el-input>
-                  </el-form-item>
-                  <el-form-item label="间隔周期：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form1.cycle" size="mini" style="width:200px;"></el-input>
-                  </el-form-item>
-            </el-form>
-            <el-form :model="form2" size="mini" v-else>
-                <el-form-item label="规则命名：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form2.breakName" size="mini" style="width:200px;"></el-input>
-                  </el-form-item>
-                  <el-form-item label="开始时间：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form2.breakData.data.begainTime" size="mini" style="width:200px;"></el-input>
-                  </el-form-item>
-                  <el-form-item label="间隔周期：" :label-width="formLabelWidth" required>
-                    <el-input v-model="form2.breakData.data.cycle" size="mini" style="width:200px;"></el-input>
-                  </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="save">保存</el-button>
-            </div>
-        </el-dialog>
+    <el-dialog title="编辑规则" :visible.sync="dialogForm2Visible" center>
+          <div class="content">
+            <el-form :model="editForm" size="mini"  ref="editForm" style="flex:1;margin-right:15px;border:1px solid #eee;height:240px;padding-top:5px;">
+              <el-form-item label="开始日期：" :label-width="formLabelWidth" >
+                <el-date-picker v-model="editForm.begainDate" type="date" placeholder="请选择开始日期"></el-date-picker>
+              </el-form-item>
+              <el-form-item label="截止日期：" :label-width="formLabelWidth"  >
+                  <el-date-picker v-model="editForm.endDate" type="date" placeholder="请选择截止日期"></el-date-picker>
+              </el-form-item>
+              <el-form-item label="日期类型：" :label-width="formLabelWidth"  >~
+                  <el-radio v-model="editForm.dateType" label="1">当日</el-radio>
+                  <el-radio v-model="editForm.dateType" label="2">昨日</el-radio>
+              </el-form-item>
+              <el-form-item label="开始时间：" :label-width="formLabelWidth"  >
+                  <el-time-picker v-model="editForm.begainTime" :picker-options="{selectableRange: '00:00:00 - 23:59:59'}" placeholder="开始时间"></el-time-picker>
+              </el-form-item>
+              <el-form-item label="截止时间：" :label-width="formLabelWidth"  >
+                  <el-time-picker v-model="editForm.endTime" :picker-options="{selectableRange: '00:00:00 - 23:59:59'}" placeholder="截止时间"></el-time-picker>
+              </el-form-item>
+          </el-form>
+          <div class="organization" style="flex:1;border:1px solid #eee;height:240px;overflow-y:scroll;padding-top:5px;">
+            <span style="color:#409EFF;"><span style="color:#f56c6c;">*</span>&nbsp;请选择关联的组织</span>
+            <el-tree :data="organizationData" node-key="id" show-checkbox default-expand-all ref="organization1"></el-tree>
+          </div>
+        </div>
+        <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="editRule('organization1')">保存</el-button>
+            <el-button  @click="deleteRule('organization1')">删除</el-button>
+            <el-button  @click="dialogForm2Visible = false">取消</el-button>
+        </div>
+    </el-dialog>
 </div>
 </template>
 
 <script>
 let id = 666;
+import {
+  getBreakList,
+  getOrganizationList,
+  addRule,
+  deleteRule,
+  editRule
+} from "@/api/index";
 export default {
   data() {
     return {
       tableData: [
         {
           organization: "华东大区",
+          organizationId:100000,
           breakName: "隔日发",
           station: "200",
           createTime: "2018-02-08 10:00:09",
@@ -176,19 +173,16 @@ export default {
             { name: "杭州服务站", id: 100012, address: "浙江省杭州市" }
           ],
           breakData: {
-            mark: 1,
-            data: [
-              { week: "monday", name: "周一", time: ["10:00  ", "11:00"] },
-              { week: "tuesday", name: "周二", time: [] },
-              { week: "wensday", name: "周三", time: ["10:00  ", "11:00"] },
-              { week: "thursday", name: "周四", time: [] },
-              { week: "friday", name: "周五", time: ["10:00  ", "11:00"] },
-              { week: "saturday", name: "周六", time: [] }
-            ]
+            begainDate: "2015-12-12",
+            endDate: "2015-12-28",
+            begainTime: new Date(10,10,10),
+            endTime: new Date(10,10,10),
+            dateType: "1",
           }
         },
         {
           organization: "华北大区",
+          organizationId:100001,
           breakName: "日日发",
           station: "100",
           createTime: "2018-02-08 10:00:09",
@@ -200,16 +194,16 @@ export default {
             { name: "杭州服务站", id: 100012, address: "浙江省杭州市" }
           ],
           breakData: {
-            mark: 2,
-            data: {
-              begainTime: "2018-07-01 10:00:00",
-              nextTime: "2018-08-01 10:00:00",
-              cycle: "24:00"
-            }
+            begainDate: "2015-12-12",
+            endDate: "2015-12-28",
+            begainTime: new Date(10,10,10),
+            endTime: new Date(10,10,10),
+            dateType: "1",
           }
         },
         {
           organization: "闽浙区",
+          organizationId:100002,
           breakName: "天天发",
           station: "88",
           createTime: "2018-02-08 10:00:09",
@@ -221,12 +215,11 @@ export default {
             { name: "杭州服务站", id: 100012, address: "浙江省杭州市" }
           ],
           breakData: {
-            mark: 2,
-            data: {
-              begainTime: "2018-07-01 10:00:00",
-              nextTime: "2018-08-01 10:00:00",
-              cycle: "24:00"
-            }
+            begainDate: "2015-12-12",
+            endDate: "2015-12-28",
+            begainTime: new Date(10,10,10),
+            endTime: new Date(10,10,10),
+            dateType: "1",
           }
         }
       ],
@@ -234,6 +227,13 @@ export default {
       dialogForm2Visible: false,
       formLabelWidth: "122px",
       form: {
+        begainDate: "",
+        endDate: "",
+        begainTime: null,
+        endTime: null,
+        dateType: "1",
+      },
+      editForm: {
         begainDate: "",
         endDate: "",
         begainTime: null,
@@ -274,13 +274,13 @@ export default {
           }
         ]
       },
-      form1: { breakName: "", breakData: { time: "", cycle: "" } },
-      form2: {
-        breakName: "",
-        breakData: { mark: "", data: { begainTime: "", cycle: "" } }
+      params: {
+        pageSize: 10,
+        page: 1
       },
-      configRule: true,
-      newAddTime: new Date(),
+      pageSizes: [10, 20, 30, 40],
+      total: 100,
+      orgId:'',
       organizationData: [
         {
           id: 1,
@@ -309,43 +309,117 @@ export default {
       ]
     };
   },
+  created(){
+    //获取截单规则表格数据
+    // this.getBreakOrderData()
+  },
   methods: {
+    //获取截单表格数据
+    getBreakOrderData(){
+      this.form.itemId = this.$route.params.id;//请求参数
+      getBreakList(
+        {
+          itemId: this.$route.params.id
+        },
+        res => {
+          if (res.code == 100) {
+            this.tableData = res.data;//截单表格数据
+            this.total = res.data && res.data.totalCount;
+          } else {
+            this.$message(res.msg ? res.msg : "请求数据失败");
+          }
+        }
+      );
+    },
+    //获取组织结构数据
+    getOrgData(){
+      getOrganizationList(
+        {
+          itemId: this.$route.params.id//相关请求参数
+        },
+        res => {
+          if (res.code == 100) {
+            this.organizationData = res.data;//组织结构数据
+          } else {
+            this.$message(res.msg ? res.msg : "请求数据失败");
+          }
+        }
+      );
+
+    },
+    //点击编辑组织
     handleClick(row) {
-      this.configRule = true;
+      // this.getOrganizationList();//获取组织结构数据
       this.dialogForm2Visible = true;
-      if (row.breakData.mark == 1) {
-        this.form2 = {
-          breakName: "",
-          breakData: { mark: "", data: { begainTime: "", cycle: "" } }
-        };
-        this.form1 = row;
-      } else {
-        this.form1 = { breakName: "", breakData: { time: "", cycle: "" } };
-        this.form2 = row;
-      }
+      this.editForm=row.breakData;//可编辑信息
+      this.orgId=row.organizationId;//当前组织id
     },
-    save() {},
-    deleteTime(time) {
-      var index = this.form.monday.indexOf(time);
-      this.form.monday.splice(index, 1);
+    //编辑组织规则-保存
+    editRule(){
+      // editRule(this.editForm, data => {
+      //   if (data.code == 100) {
+      //     this.getBreakOrderData();//刷新页面重新获取表格数据
+      //     this.dialogForm1Visible=false;
+      //   } else {
+      //     this.$message.error(data.msg);
+      //   }
+      // });
+      console.log(this.editForm.begainDate);
+      this.dialogForm2Visible=false;
     },
-    addTime() {
-      this.form.monday.push(new Date(this.newAddTime));
-      this.newAddTime = "";
+    //编辑组织规则-删除
+    deleteRule(){
+      // deleteRule(this.form1.name, data => {
+      //   if (data.code == 100) {
+      //     this.tableData.forEach((item,i)=>{
+      //       if(item.organizationId==this.orgId){
+      //         this.tableData.splice(i,1);
+      //         this.dialogForm2Visible=false;
+      //       }
+      //     })
+      //   } else {
+      //     this.$message.error(data.msg);
+      //   }
+      // });
+      this.tableData.forEach((item,i)=>{
+        if(item.organizationId==this.orgId){
+          this.tableData.splice(i,1);
+          this.dialogForm2Visible=false;
+        }
+      })
     },
-    getCheckedNodes(data) {
-      var orgData = this.$refs.organization.getCheckedNodes();
-      console.log(this.$refs.organization.getCheckedNodes());
+    //新增组织规则
+    getCheckedNodes(dom) {
+      // this.getOrganizationList();//获取组织结构数据
+      var orgData = this.$refs[dom].getCheckedNodes();
+      console.log(this.$refs[dom].getCheckedNodes());
       console.log(new Date(this.form.endDate));
       this.$refs.ruleForm.validate(valid => {
         if (valid & (orgData.length !== 0)) {
-          alert("submit!");
+          addRule(this.form, data => {
+            if (data.code == 100) {
+              this.getBreakOrderData();//刷新页面重新获取表格数据
+              this.dialogForm1Visible=false;
+            } else {
+              this.$message.error(data.msg);
+            }
+          });
         } else {
           console.log("error submit!!");
           return false;
         }
       });
-    }
+    },
+    //分页
+    handleSizeChange(e) {
+      this.params.pageSize = e;
+      this.params.page = 1;
+      this.getBreakOrderData();
+    },
+    handleCurrentChange(e) {
+      this.params.page = e;
+      this.getBreakOrderData();
+    },
   }
 };
 </script>

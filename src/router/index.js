@@ -11,6 +11,7 @@ import breakOrder from '@/views/content/supplierManage/breakOrder'
 import brandConfig from '@/views/content/goodsBasicInfo/brandConfig'
 import account from '@/views/content/authorityManage/account'
 import role from '@/views/content/authorityManage/role'
+import menuManage from '@/views/content/MenuManage/MenuManage'
 import login from '@/views/login'
 
 Vue.use(Router)
@@ -75,6 +76,11 @@ export default new Router({
           path:'/role',
           name:'role',
           component:role
+        },
+        {
+          path:'/menuManage',
+          name:'menuManage',
+          component:menuManage
         }
       ]
     },

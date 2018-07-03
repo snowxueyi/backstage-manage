@@ -7,13 +7,19 @@
         style="width:30%;margin:20px 0;">
         </el-input>
         <div class="custom-tree-node" style="width:80%;">
-            <el-tree
-            :data="data5"
-            node-key="id"
-            default-expand-all
-            :expand-on-click-node="false"
-            ref="organization"
-            style="flex:1;border:1px solid #eee;margin-right:20px;height:500px;">
+            <div class="org" style="flex:1;border:1px solid #eee;margin-right:20px;height:500px;">
+              <div class="init">
+                <el-row style="margin:15px 0;width:100%;">
+                    <el-button type="text" @click="addOrg()"><i class="el-icon-plus"></i>新增一级组织</el-button>
+                </el-row>
+              </div>
+              <el-tree
+              :data="orgData"
+              node-key="id"
+              default-expand-all
+              :expand-on-click-node="false"
+              ref="organization"
+              >
                 <span class="custom-tree-node" slot-scope="{ node, data }" @click="()=>showStation(data)">
                     <span>{{ node.label }}</span>
                     <span style="color:#ccc;!important;">
@@ -28,7 +34,40 @@
                         </a>
                     </span>
                 </span>
-            </el-tree>
+              </el-tree>
+            </div>
+            <div class="stationAll" style="flex:1;border:1px solid #eee;height:500px;overflow-y:scroll;">
+                <div class="title custom-tree-node" style="align-items: center;padding-left:5px;">
+                    <span>{{title}}</span>
+                    <el-button type="text" @click="addStation(stationId)"><i class="el-icon-plus"></i>新增服务站</el-button>
+                </div>
+                <ul class="station-list"> 
+                    <li :key="index" v-for="(item,index) in stationList" > 
+                            <span class="province">{{item.province}}</span> 
+                            <dl  class="station" v-if="item.station.length"> 
+                                <dd class="station-item custom-tree-node" :key="index1" v-for="(item1,index1) in item.station" :style="index1==item.station.length-1?'':'border-bottom:1px solid #eee;'">
+                                        <span>{{item1.name}}</span>
+                                        <span class=" delete el-icon-delete" @click="deleteStation(item1.id)"></span>
+                                </dd>  
+                            </dl> 
+                    </li> 
+                </ul> 
+            </div>
+            <!-- 组织为空弹出框-->
+            <el-dialog title="新建组织" :visible.sync="dialogFormVisible" center>
+                <el-form :model="initOrgForm">
+                    <el-form-item label="组织名称：" :label-width="formLabelWidth">
+                        <el-input v-model="initOrgForm.label" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="组织ID：" :label-width="formLabelWidth">
+                        <el-input v-model="initOrgForm.id" auto-complete="off" ></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="addOrgSave">保 存</el-button>
+                </div>
+            </el-dialog>
             <!-- 新增组织弹出框-->
             <el-dialog title="新建组织" :visible.sync="dialogForm1Visible" center>
                 <el-form :model="form1">
@@ -72,23 +111,6 @@
                     <el-button @click="dialogForm2Visible = false">取 消</el-button>
                 </div>
             </el-dialog>
-            <div class="stationAll" style="flex:1;border:1px solid #eee;height:500px;overflow-y:scroll;">
-                <div class="title custom-tree-node" style="align-items: center;padding-left:5px;">
-                    <span>{{title}}</span>
-                    <el-button type="text" @click="addStation(stationId)"><i class="el-icon-plus"></i>新增服务站</el-button>
-                </div>
-                <ul class="station-list"> 
-                    <li :key="index" v-for="(item,index) in stationList" > 
-                            <span class="province">{{item.province}}</span> 
-                            <dl  class="station" v-if="item.station.length"> 
-                                <dd class="station-item custom-tree-node" :key="index1" v-for="(item1,index1) in item.station" :style="index1==item.station.length-1?'':'border-bottom:1px solid #eee;'">
-                                        <span>{{item1.name}}</span>
-                                        <span class=" delete el-icon-delete" @click="deleteStation(item1.id)"></span>
-                                </dd>  
-                            </dl> 
-                    </li> 
-                </ul> 
-            </div>
             <!-- 新增服务站弹出框-->
             <el-dialog title="选择销售区域" :visible.sync="dialogForm3Visible" center>
                 <el-form :model="form1">
@@ -126,40 +148,44 @@ import {
 import {getArea} from "@/store/contain";
 export default {
   data() {
-    const data = [
-      {
-        id: 1,
-        label: "快准车服",
-        children: [
-          {
-            id: 100001,
-            label: "(100001) 华南区"
-          },
-          {
-            id: 1000002,
-            label: "(1000002) 华东大区",
-            children: [
-              {
-                id: 200003,
-                label: "(200003) 江浙区"
-              },
-              {
-                id: 200004,
-                label: "(200004) 闽浙区"
-              }
-            ]
-          }
-        ]
-      }
-    ];
     return {
       filterText: "",
-      data5: JSON.parse(JSON.stringify(data)),
+      orgData: [
+        {
+          id: 1,
+          label: "快准车服",
+          children: [
+            {
+              id: 100001,
+              label: "(100001) 华南区"
+            },
+            {
+              id: 1000002,
+              label: "(1000002) 华东大区",
+              children: [
+                {
+                  id: 200003,
+                  label: "(200003) 江浙区"
+                },
+                {
+                  id: 200004,
+                  label: "(200004) 闽浙区"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      dialogFormVisible: false,
       dialogForm1Visible: false,
       dialogForm2Visible: false,
       dialogForm3Visible: false,
       form1: {
         name: "",
+        id: ""
+      },
+      initOrgForm:{
+        label: "",
         id: ""
       },
       form2: {
@@ -184,17 +210,23 @@ export default {
       selectData:[]
     };
   },
-  watch: {
-    filterText(val) {
-      this.$refs.tree2.filter(val);
-    },
-    editOrganization(val) {}
-  },
   methods: {
     append(data) {
       this.dialogForm1Visible = true;
       this.addOrganization = data;
       this.form1.id = 888888;
+    },
+    addOrg(){
+      this.dialogFormVisible = true;
+      // this.initOrg[0].id = 888888;
+    },
+    addOrgSave(){
+      const newChild = {
+        id: this.initOrgForm.id,
+        label: this.initOrgForm.label,
+      };
+      this.orgData.push(newChild);
+      this.dialogFormVisible=false;
     },
     appendSave() {
       const newChild = {
@@ -247,10 +279,18 @@ export default {
       var id = this.editOrganization.data.id;
       var node = this.editOrganization.node;
       //删除父组织
-      if (this.editOrganization.children) {
+      const parent = node.parent;
+      const children = parent.data.children || parent.data;
+      var currentData=this.editOrganization.data;
+      //父组织不支持删除
+      if ((currentData.hasOwnProperty('children'))&&(currentData.children.length!==0)) {
         this.$message("请先删除相应子组织");
         return false;
       }
+      const index = children.findIndex(d => d.id === id);
+      children.splice(index, 1);
+      this.dialogForm2Visible = false;
+    
       // ajax请求删除对应组织信息
       //   deleteOrganization(id, data => {
       //         if (data.code == 100) {
@@ -264,11 +304,6 @@ export default {
       //           this.$message.error(data.msg);
       //         }
       //     });
-      const parent = node.parent;
-      const children = parent.data.children || parent.data;
-      const index = children.findIndex(d => d.id === id);
-      children.splice(index, 1);
-      this.dialogForm2Visible = false;
     },
     deleteStation(id) {
       console.log(id);
@@ -495,6 +530,9 @@ export default {
   }
   .station-item:hover {
     background-color: #f7f7f7;
+  }
+  .el-row{
+    text-align: center;
   }
 }
 </style>
