@@ -11,7 +11,12 @@
                 background-color="#4b84ff"
                 text-color="#fff"
                 active-text-color="#ffd04b" >
-                <el-menu-item :index="item.id" :key="item.id" v-for="item in menuList" >{{item.label}}</el-menu-item>
+                <el-menu-item :index="item.name" :key="item.id" v-for="item in menuList" >
+                  <div>
+                      <i :class="item.icon"></i>
+                      <span slot="title">{{item.title}}</span>
+                    </div>
+                </el-menu-item>
               </el-menu>
             </div>
             <div class="loginout" style="height:60px;line-height:60px;color:#fff;width:150px;position:absolute;right:10px;">
@@ -32,19 +37,19 @@
           <el-aside class="menu-warp" width="200px" style="height:100%">
             <div  style="height:100%">
               <el-menu
-                :key="item.id" 
+                :key="item.name" 
                 v-for="item in menuList"
                 style="height:100%"
                 :default-active="asideActive"
                 class="el-menu-vertical-demo"
                 background-color="#fff"
                 text-color="#333"
-                v-if="index==item.id"
+                v-if="index==item.name"
                 active-text-color="#ffd04b">
                 <el-menu-item :index="item1.name" :key="item1.title" v-for="item1 in item.children" @click="addtab(item1)">
                   <router-link :to="`${item1.route}`" tag="div">
                     <div>
-                      <i class="el-icon-menu"></i>
+                      <i :class="item1.icon"></i>
                       <span slot="title">{{item1.title}}</span>
                     </div>
                   </router-link>
@@ -87,46 +92,15 @@ export default {
         }
       ],
       tabIndex: 1,
-      menuList: [
-        {
-          id: '1',
-          label: '商品基础档案',
-          children: [
-            {name:'1',title:'新增商品',route:'/addGoods',position:'1'},
-            {name:'2',title:'商品列表',route:'/goodsList',position:'1'},
-            {name:'3',title:'商品分类配置',route:'/goodsSort',position:'1'},
-            {name:'4',title:'计量单位配置',route:'/measureConfig',position:'1'},
-            {name:'5',title:'商品品牌配置',route:'/brandConfig',position:'1'}
-            ]
-        }, 
-        {
-          id: '2',
-          label: '组织管理',
-          children: [
-            { name: "6", title: "组织管理", position: "2", route: "supplierAdd" },
-            { name: "7", title: "截单规则", position: "2", route: "breakOrder" }
-            ]
-        },
-        {
-          id: '3',
-          label: '菜单管理',
-          children: [
-            { name: "8", title: "菜单管理", position: "3", route: "menuManage" },
-            ]
-        }, 
-        {
-          id: '4',
-          label: '权限管理',
-          children: [
-            {name:'10',title:'账号管理',position:'4',route:'account'},
-            {name:'11',title:'角色管理',position:'4',route:'role'}
-            ]
-        }
-      ]
+      menuList:null
     };
   },
+  mounted(){
+    this.menuList=this.menuData;
+    console.log(this.menuList);
+  },
   computed: {
-    ...mapState(["title", "path"])
+    ...mapState(["title", "path","menuData"])
   },
   watch: {
     index: function(newVal, oldVal) {
@@ -134,7 +108,6 @@ export default {
     }
   },
   components: {},
-  mounted() {},
   ...mapMutations(["SET_PATH", "SET_TITLE"]),
   methods: {
     handleSelect(key, keyPath) {
