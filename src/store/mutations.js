@@ -7,6 +7,10 @@ const SET_LOADING = 'SET_LOADING'
 const SET_PATH = 'SET_PATH'
 const SET_HEADNAV='SET_HEADNAV'
 const SET_SIDENAV='SET_SIDENAV'
+const EDIT_LIST='EDIT_LIST'
+const DELETE_LIST='DELETE_LIST'
+const ADD_LIST='ADD_LIST'
+const ADD_MENU='ADD_MENU'
 
 import { setStore, getStore } from '../utils/storage'
 export default {
@@ -65,5 +69,49 @@ export default {
     } else {
       state.userInfo = null
     }
+  },
+   // 编辑菜单
+   [EDIT_LIST] (state, info) {
+    state.menuData.forEach((item,i)=>{
+      if(item.name==info.newMenu.name){
+          item.title=info.form.title;
+          item.icon=info.form.icon;
+          item.order=info.form.order;
+          item.route=info.form.route;
+          item.type=info.form.type;
+          item.children=info.newMenu.children;
+      }
+      console.log(state.menuData);
+    })
+  },
+   // 删除菜单
+   [DELETE_LIST] (state, info) {
+    state.menuData.forEach((item,i)=>{
+      if(item.name==info.name){
+        state.menuData.splice(i,1);
+        console.log(state.menuData);
+      }else{
+            if(item.name==info.position){
+                item.children.filter((item1,k)=>{
+                    if(item1.name==info.name){
+                        item.children.splice(k,1)
+                    }
+                })
+            }
+            console.log(state.menuData);
+      }
+    })
+  },
+  //新增目录
+  [ADD_LIST](state,info){
+    state.menuData.forEach(item=>{
+      if(item.name==info.newMenu.name){
+          item.children.push(info.newChild);
+      }
+  })
+  },
+  //新增菜单
+  [ADD_MENU](state,info){
+    state.menuData.push(info);
   }
 }
