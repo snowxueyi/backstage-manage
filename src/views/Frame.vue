@@ -175,6 +175,7 @@ export default {
           position: object.position
         });
       }
+      // this.ADD_TAB(object);
       this.editableTabsValue = object.name;
       return this.editableTabs;
     },
@@ -201,7 +202,8 @@ export default {
     handleCommand(command) {
       this.$router.push("/login");
       this.$message('click on item ' + command);
-    }
+    },
+    ...mapMutations(["ADD_TAB", "RECORD_PHONE"])
   }
 };
 </script>

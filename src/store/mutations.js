@@ -11,6 +11,8 @@ const EDIT_LIST='EDIT_LIST'
 const DELETE_LIST='DELETE_LIST'
 const ADD_LIST='ADD_LIST'
 const ADD_MENU='ADD_MENU'
+const ADD_TAB='ADD_TAB'
+const TAB_CLICK='TAB_CLICK'
 
 import { setStore, getStore } from '../utils/storage'
 export default {
@@ -113,5 +115,34 @@ export default {
   //新增菜单
   [ADD_MENU](state,info){
     state.menuData.push(info);
+  },
+  //新增内部tab栏
+  [ADD_TAB](state,info){
+    var flag = false;
+      state.editableTabs.forEach(item => {
+        if (item.name == info.name) {
+          flag = true;
+          return true;
+        }
+      });
+      if (!flag) {
+        state.editableTabs.push({
+          title: info.title,
+          name: info.name,
+          route: info.route,
+          position: info.position
+        });
+      }
+      console.log(state.editableTabs);
+  },
+  [TAB_CLICK](state,info){
+    state.editableTabs.forEach(item => {
+      if (item.name == info.name) {
+        path = item.route;
+        current = item.position;
+        asideIndex=item.name;
+        return this.asideActive;
+      }
+    });
   }
 }

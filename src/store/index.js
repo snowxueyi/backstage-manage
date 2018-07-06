@@ -10,6 +10,14 @@ const state = {
   loading:true,
   recodePhone:'',
   path:"home",
+  editableTabs: [
+    {
+      title: "新增商品",
+      name: "1",
+      route: "/addGoods",
+      position: "1"
+    }
+  ],
   menuData:[
     {
       name: '1',
