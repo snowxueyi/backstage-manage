@@ -117,7 +117,6 @@ export default {
             // console.log(menu);
           } else {
             // this.$message.error(data.msg);
-            console.log('111')
             setStore("authPath","/addGoods");
             this.$router.push("/addGoods")
           }
