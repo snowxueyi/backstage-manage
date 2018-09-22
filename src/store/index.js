@@ -33,7 +33,8 @@ const state = {
         {name:'6',type:'目录',order:'1',title:'商品列表',route:'/goodsList',icon:'el-icon-goods',position:'1',authority:'goodsList'},
         {name:'7',type:'目录',order:'1',title:'商品分类配置',route:'/goodsSort',icon:'el-icon-goods',position:'1',authority:'goodsSort'},
         {name:'8',type:'目录',order:'1',title:'计量单位配置',route:'/measureConfig',icon:'el-icon-goods',position:'1',authority:'measureConfig'},
-        {name:'9',type:'目录',order:'1',title:'商品品牌配置',route:'/brandConfig',icon:'el-icon-goods',position:'1',authority:'brandConfig'}
+        {name:'9',type:'目录',order:'1',title:'商品品牌配置',route:'/brandConfig',icon:'el-icon-goods',position:'1',authority:'brandConfig'},
+        {name:'999',type:'目录',order:'1',title:'测试',route:'/test',icon:'el-icon-goods',position:'1',authority:'test'}
         ]
     }, 
     {

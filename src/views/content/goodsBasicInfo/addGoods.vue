@@ -307,6 +307,7 @@
 </template>
 <script>
 import richEdit from "../../com/richEdit.vue";
+import pull from "../../com/richEdit.vue";
 export default {
   data() {
     return {
@@ -376,7 +377,7 @@ export default {
     }
   },
   components: {
-    richEdit
+    richEdit,
   }
 };
 </script>

@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Index from '@/views/Frame'
 import goodsSort from '@/views/content/goodsBasicInfo/goodsSort'
 import addGoods from '@/views/content/goodsBasicInfo/addGoods'
+import test from '@/views/content/test/test'
 import goodsList from '@/views/content/goodsBasicInfo/goodsList'
 import measureConfig from '@/views/content/goodsBasicInfo/measureConfig'
 import supplierDetail from '@/views/content/supplierManage/supplierDetail'
@@ -34,6 +35,10 @@ export default new Router({
         {
           path: '/goodsSort',
           name: 'goodsSort', component: goodsSort,head:'1',side:'3'
+        },
+        {
+          path: '/test',
+          name: 'test', component: test,head:'1',side:'3'
         },
         {
           path: '/supplierDetail/:id',
