@@ -2,7 +2,7 @@
   "name": "cmsui",
   "version": "1.0.0",
   "description": "后台系统模板",
-  "author": "491331418@qq.com <491331418@qq.com>",
+  "author": "1391964315@qq.com <1391964315@qq.com>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --open --inline --progress --config build/webpack.dev.conf.js",
